@@ -1,0 +1,39 @@
+.sideMenu {
+  background-color: #001529;
+  position:fixed;
+  top:0;
+  left:0;
+  height: 100%;
+  z-index: 2;
+  overflow:auto;
+  padding-bottom:40px;
+}
+
+.paddingMax {
+  height:100%;
+  padding-left:256px;
+}
+
+.paddingMin {
+  height:100%;
+  padding-left:80px;
+}
+
+.contentMax {
+  padding:20px 256px 220px 20px;
+  height:100%;
+  width:100%;
+  position:absolute;
+  overflow-y: scroll;
+  background-color: rgb(241, 241, 241);
+
+}
+
+.contentMin {
+  padding:20px 80px 220px 10px;
+  height:100%;
+  width:100%;
+  position:absolute;
+  overflow-y: scroll;
+  background-color: rgb(241, 241, 241);
+}

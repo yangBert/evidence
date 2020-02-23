@@ -1,0 +1,144 @@
+.pageCenter {
+  width: 600px;
+  position: fixed;
+  margin: 0 auto;
+  top: 30%;
+  left: 50%;
+  margin-left: -300px;
+  text-align:center;
+}
+
+.logo {
+  width: 66px;
+  position:relative;
+  z-index: 100;
+}
+
+.title{
+  font-size: 23px;
+  display:inline;
+  position:relative;
+  bottom: -11px;
+  margin-left: 20px;
+  font-weight:bold;
+}
+
+.submit {
+  width: 460px;
+  text-align:cetner;
+  margin-top: 50px;
+  color: #fff;
+  font-size: 18px;
+  border-radius:3px;
+  position:relative;
+  right:-8px;
+  cursor:pointer;
+  z-index: 100;
+}
+
+.submit:hover {
+  background-color: rgb(64, 117, 170);
+}
+
+.bg {
+  background-color: rgb(198, 215, 241);
+  height:100%;
+  width:100%;
+  position:absolute;
+}
+
+.imgTop {
+  position:fixed;
+  transform:rotate(-180deg);
+  top: 5%;
+  width: 500px;
+  right: 60%;
+  opacity: .5;
+  animation:imgTop 200s linear infinite;
+  -webkit-animation:imgTop 200s linear infinite; /*Safari and Chrome*/
+}
+
+.imgCenter {
+  width: 20%;
+  position:fixed;
+  bottom: 5%;
+  right: 0%;
+  opacity: .5;
+  /* animation:imgCenter 250s linear infinite;  */
+}
+
+.imgBottom {
+  position:fixed;
+  width: 400px;
+  bottom: 20%;
+  right: 90%;
+  opacity: .7;
+  animation:imgBottom 250s 1 forwards;
+  -webkit-animation:imgBottom 250s 1 forwards; /*Safari and Chrome*/
+}
+
+.imgOhter{
+  position:absolute;
+  width: 320px;
+  top: -45px;
+  right: -20px;
+  opacity: .9;
+  transform:rotate(-5deg);
+}
+
+.footer{
+  text-align:center;
+  position:fixed;
+  bottom:0;
+  width:100%;
+  padding: 10px 0;
+  background-color: rgba(177, 191, 214, 0.3);
+}
+
+@keyframes imgTop
+{
+from {right:60%}
+to {right:100%}
+}
+
+@-webkit-keyframes imgTop /*Safari and Chrome*/
+{
+  from {right:60%}
+  to {right:100%}
+}
+
+@keyframes imgCenter
+{
+from {right:0%}
+to {right:100%}
+}
+
+@-webkit-keyframes imgCenter /*Safari and Chrome*/
+{
+  from {right:0%}
+  to {right:100%}
+}
+
+@keyframes imgBottom
+{
+from {right:90%}
+to {right:100%}
+}
+
+@-webkit-keyframes imgBottom /*Safari and Chrome*/
+{
+  from {right:90%}
+  to {right:100%}
+}
+
+@keyframes imgOhter
+{
+from {right:-400px}
+to {right:100%}
+}
+
+@-webkit-keyframes imgOhter /*Safari and Chrome*/
+{
+  from {right:-400px}
+  to {right:100%}
+}
