@@ -59,6 +59,7 @@ function LoginButton(props) {
   return <Button
     type="primary"
     size="large"
+    style={{height:"50px",fontSize:"20px"}}
     className={styles.submit}
     onClick={() => initSocket()}
     loading={props.loginLoading}

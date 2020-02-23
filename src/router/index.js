@@ -2,7 +2,9 @@ import { lazy } from 'react';
 const Home = lazy(() => import('pages/home'));
 const ErrorResult = lazy(() => import('pages/common/error/ErrorResult'));
 const AppList = lazy(() => import('pages/app'));
-const AppAdd = lazy(() => import('pages/app/components/Add'));
+const EvidenceList = lazy(() => import('pages/evidence'));
+const EvidenceAdd = lazy(() => import('pages/evidence/components/Add'));
+
 
 const routes = [
   {
@@ -19,10 +21,12 @@ const routes = [
     component: AppList
   },
   {
-    path: "/app/add",
-    component: AppAdd
+    path: "/evid/list",
+    component: EvidenceList
   },
-
-  
+  {
+    path: "/evid/add",
+    component: EvidenceAdd
+  },
 ];
 export default routes;

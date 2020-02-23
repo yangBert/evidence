@@ -183,6 +183,7 @@ export const uamBaseTokenPowerNewTokenInterRole = "/api/v1/uamBase/tokenPower/ne
 export const uamBaseTokenPowerSelectTokenInterRoleList = "/api/v1/uamBase/tokenPower/selectTokenInterRoleList";
 
 export const evidenceCreatApp = "/evidence/CreatApp";
+export const evidenceQueryApp = "/evidence/queryApp";
 
 
 
