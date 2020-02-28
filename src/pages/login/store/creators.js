@@ -6,39 +6,24 @@ import notification from 'pages/common/layer/notification';
 import $$ from 'static/js/base.js';
 
 
-const loginSubmit = req => {
+const loginSubmitAction = req => {
   return dispatch => {
-    console.log("req=>",req.data.signData);
-    request.json(requestURL.managerLoginURL, req.data, res => {
+    dispatch(changeLoginLoading(true))
+    request.json(requestURL.evidenceLogin, req.data, res => {
       dispatch(changeLoginLoading(false))
       if (res.data) {
-        const { success, message, data } = res.data && res.data
-        if (success) {
+        const { code, msg, data } = res.data
+        if (code === 0) {
           $$.token.set(data)
           req.props.history.push("/home")
         } else {
-          notification('error', message)
+          notification('error', msg)
         }
       } else {
         notification('error', res)
       }
-    })
+    }, false)
   }
-}
-
-//签名
-function pkcs1SignData_PIN(props, dispatch, GZCA, containerName, original, certserial) {
-  GZCA.GZCA_Pkcs1SignData_PIN(containerName, original, function (res) {
-    console.log(res)
-    if (res.success) {
-      const signData = res.SignData;
-      const data = { certserial, signData };
-      dispatch(loginSubmit({ data, props }));
-    } else {
-      dispatch(changeLoginLoading(false))
-      notification('error', res.msg)
-    }
-  });
 }
 
 //改变编辑弹出层提交按钮loading状态
@@ -47,29 +32,20 @@ const changeLoginLoading = loginLoading => ({
   loginLoading,
 })
 
-//获取随机数原文
-const getRandomAction = params => {
-  return dispatch => {
-    dispatch(changeLoginLoading(true))
-    console.log("certserial=", "certserial=" + params.certserial)
-    request.json(requestURL.managerBuildRandNumURL, "certserial=" + params.certserial, res => {
-      if (res.data) {
-        const { success, message, data } = res.data && res.data
-        if (success) {
-          pkcs1SignData_PIN(params.props, dispatch, params.GZCA, params.ContainerName, data, params.certserial)
-        } else {
-          notification('error', message)
-          dispatch(changeLoginLoading(false))
-        }
-      } else {
-        notification('error', res)
-        dispatch(changeLoginLoading(false))
-      }
-    })
-  }
-}
+const onChangeNameAction = loginName => ({
+  type: types.CHANGE_LOGIN_NAME,
+  loginName,
+})
+
+const onChangePasswordAction = password => ({
+  type: types.CHANGE_PASSWORD,
+  password,
+})
+
 
 export {
-  getRandomAction,
+  onChangeNameAction,
   changeLoginLoading,
+  onChangePasswordAction,
+  loginSubmitAction
 }

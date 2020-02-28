@@ -1,77 +1,68 @@
 import React, { Component } from 'react';
-import { Spin, Input, Button, message, Card, Form,Upload,Icon } from 'antd';
+import { Spin, Input, Button, message, Card, Form, Select, Icon } from 'antd';
 import { connect } from 'react-redux';
 import * as creators from '../store/creators';
 import styles from '../css/add.module.css';
-import $$ from 'static/js/base';
-import * as config from '../config';
+import spinningAction from 'pages/common/layer/spinning';
+import sm3 from 'sm3';
+import tools from 'static/js/tools';
 
-const props = {
-  name: 'file',
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  headers: {
-    authorization: 'authorization-text',
-  },
-  onChange(info) {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
+const { TextArea } = Input;
+const { Option } = Select;
 
+var hashFile = null
 class Add extends Component {
 
   componentDidMount() {
-    if (this.props.location.state && this.props.location.state.editRecord) {
-      const { title, url, imgUrl } = this.props.location.state.editRecord
-      this.props.onChangeEditTitle(title)
-      this.props.onChangeEditURL(url)
-      this.props.onChangeEditImageURL(imgUrl)
+    hashFile = document.getElementById("hash-file-hidden")
+    hashFile.onchange = e => {
+      const file = hashFile.files[0]
+      this.props.changeFileName(file.name)
+      this.props.changeFileSize(file.size)
+      this.props.changePageLoading(true)
+      tools.reads(file, base64url => {
+        this.props.changePageLoading(false)
+        this.props.changeFileHash(sm3(base64url))
+      });
+
     }
   }
 
   save() {
-    const { editTitle, editURL,editImageURL } = this.props;
-    if ($$.trim(editTitle) === "") {
-      message.error('链接标题');
+    const { appkey, fileName, fileSize, fileHash } = this.props;
+    if (appkey === "") {
+      message.error('请选择appkey');
       return
-    } else if ($$.trim(editURL) === "") {
-      message.error('链接URL');
+    } else if (fileName === "") {
+      message.error('请上传文件');
       return
-    }else if ($$.trim(editImageURL) === "") {
-      message.error('图片URL');
+    } else if (fileHash === "") {
+      message.error('请上传文件');
       return
     }
-    const userNo = $$.localStorage.get("adminId")
     const req = {
       props: this.props,
       data: {
-        title: $$.trim(editTitle),
-        url: $$.trim(editURL),
-        imgUrl:editImageURL,
-        userNo
+        appID: appkey,
+        fileName,
+        fileHash,
+        fileSize,
       }
     }
 
-    const editId = this.props.location.state && this.props.location.state.editRecord.id
-    if (editId) {
-      req.data.id = editId
-    }
     this.props.save(req)
   }
 
-  mapStatus() {
-    let statusArr = [];
-    Object.keys(config.status).forEach(k => {
-      statusArr.push({k,v:config.status[k]})
-    })
-    return statusArr;
+  handleClick() {
+    hashFile.click()
   }
+
+  fetchAppkey = value => {
+    this.props.queryFetchAppkey({
+      props: this.props,
+      data: { appIDs: value }
+    })
+  };
 
   render() {
     return (
@@ -80,26 +71,42 @@ class Add extends Component {
           <div className="pageContentColor">
             <Card title="新增存证信息" bordered={false}>
               <Form className={`${styles.form} clearfix`}>
-                <div className={`${styles.formLine} pullLeft`}><label className="pullLeft">应用appkey：</label>
+                <div className={`${styles.formBlock} pullLeft`}><label className="pullLeft">应用appkey：</label>
                   <div className={`${styles.inline} pullLeft`}>
-                    <Input
-                      className={styles.text}
+                    <Select
+                      showSearch
+                      value={this.props.appkey}
                       placeholder="应用appkey"
-                      onChange={e => this.props.onChangeEditTitle(e.target.value)}
-                      value={this.props.editTitle}
-                    />
+                      notFoundContent={this.props.fetching ? <Spin size="small" /> : null}
+                      filterOption={false}
+                      onSearch={this.fetchAppkey}
+                      onChange={value => this.props.onChangeAppkey(value)}
+                      style={{ width: '100%' }}
+                    >
+                      {
+                        this.props.appList.map(item => (
+                          <Option key={item.appID} value={item.appID}>{item.appID}</Option>
+                        ))}
+                    </Select>
                   </div>
                 </div>
-                <div className={`${styles.formBlock} pullLeft`}><label className="pullLeft">存证信息：</label>
+                <div className={`${styles.formBlock} pullLeft`}><label className="pullLeft">选择文件：</label>
                   <div className={`${styles.inline} pullLeft`}>
-                  <Upload {...props}>
-                    <Button>
-                      <Icon type="upload" /> Click to Upload
+                    <Button onClick={this.handleClick}>
+                      <input type="file" style={{ display: "none" }} id="hash-file-hidden" />
+                      <Icon type="upload" /> 选择文件
                     </Button>
-                  </Upload>
                   </div>
                 </div>
-
+                <div className={`${styles.formBlock} pullLeft`}><label className="pullLeft">文件摘要：</label>
+                  <div className={`${styles.inline} pullLeft`}>
+                    <TextArea
+                      className={styles.text}
+                      value={this.props.fileHash}
+                      onChange={e => this.props.changeFileHash(e.target.value)}
+                      rows={4} />
+                  </div>
+                </div>
               </Form>
             </Card>
           </div >
@@ -127,11 +134,13 @@ class Add extends Component {
 
 const mapState = state => ({
   spinning: state.evidence.spinning,
-  editTitle: state.evidence.editTitle,
-  editURL: state.evidence.editURL,
-  editImageURL: state.evidence.editImageURL,
-  status: state.evidence.editStatus,
+  fileHash: state.evidence.fileHash,
+  fileName: state.evidence.fileName,
+  fileSize: state.evidence.fileSize,
   saveLoading: state.evidence.saveLoading,
+  fetching: state.evidence.fetching,
+  appkey: state.evidence.appkey,
+  appList: state.evidence.appList,
 })
 
 const mapDispatch = dispatch => ({
@@ -139,19 +148,30 @@ const mapDispatch = dispatch => ({
     const action = creators.saveAction(req);
     dispatch(action);
   },
-  onChangeEditTitle: value => {
-    const action = creators.onChangeEditTitleAction(value);
+  onChangeAppkey: value => {
+    const action = creators.onChangeAppkeyAction(value);
     dispatch(action);
   },
-  onChangeEditURL: value => {
-    const action = creators.onChangeEditURLAction(value);
+  queryFetchAppkey: req => {
+    const action = creators.queryFetchAppkeyAction(req);
     dispatch(action);
   },
-  onChangeEditImageURL: value => {
-    const action = creators.onChangeEditImageURLAction(value);
+  changeFileHash: value => {
+    const action = creators.changeFileHashAction(value);
     dispatch(action);
   },
-
+  changeFileName: value => {
+    const action = creators.changeFileNameAction(value);
+    dispatch(action);
+  },
+  changeFileSize: value => {
+    const action = creators.changeFileSizeAction(value);
+    dispatch(action);
+  },
+  changePageLoading: bl => {
+    const action = spinningAction(bl)
+    dispatch(action)
+  }
 })
 
 export default connect(mapState, mapDispatch)(Add);

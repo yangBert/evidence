@@ -1,80 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withRouter } from 'react-router';
 import styles from './login.module.css';
-import { GZCA } from 'static/plugins/gzca/js/gzca';
 import * as creators from './store/creators';
 import { connect } from 'react-redux';
-import { Button } from 'antd';
-import notification from 'pages/common/layer/notification';
+import { Button, Input, message } from 'antd';
+
 function LoginButton(props) {
+  const [refName, setRefName] = useState(null)
+  const [refPassword, setRefPassword] = useState(null)
 
-  //初始化连接
-  function initSocket() {
-    GZCA.init((res) => {
-      if (res) {
-        getUkeyList();
-      } else {
-        notification('error', res.msg)
-      }
-    });
+  function login() {
+    const username = props.loginName
+    const password = props.password
+    if (username === "") {
+      message.error('请输入用户名')
+      refName.focus()
+      return
+    } else if (password === "") {
+      message.error('请输入密码')
+      refPassword.focus()
+      return
+    }
+    const data = { username, password }
+    props.loginSubmit({ props, data })
   }
 
-  //获取UKEY列表
-  function getUkeyList() {
-    const CertType = 1;
-    GZCA.GZCA_GetCertList(true, CertType, function (res) {
-      if (res.success) {
-        console.log(res)
-        getCert(res.ContainerName, CertType)
-      } else {
-        notification('error', res.msg)
-      }
-    });
-  }
+  return <div>
+    <div className={styles.formBlock}>
+      <Input
+        style={{ height: "35px", marginBottom: "20px" }}
+        placeholder="请输入账号"
+        onChange={e => props.onChangeName(e.target.value)}
+        value={props.loginName}
+        ref={input => setRefName(input)}
+      />
+      <Input
+        style={{ height: "35px" }}
+        placeholder="请输入密码"
+        type="password"
+        value={props.password}
+        onChange={e => props.onChangePassword(e.target.value)}
+        ref={input => setRefPassword(input)}
+      />
+    </div>
 
-  //获取签名证书base64
-  function getCert(ContainerName, CertType) {
-    GZCA.GZCA_ExportCert(ContainerName, CertType, function (res) {
-      if (res.success) {
-        const CertB64 = res.CertB64;
-        getSn(CertB64, ContainerName);
-      } else {
-        notification('error', res.msg)
-      }
-    });
-  }
+    <Button
+      type="primary"
+      size="large"
+      style={{ height: "41px", fontSize: "20px" }}
+      className={styles.submit}
+      onClick={() => login()}
+      loading={props.loginLoading}
+    >登 录</Button>
+  </div>
 
-  //获取签名证书序列号
-  function getSn(CertB64, ContainerName) {
-    GZCA.GZCA_GetCertInfo(CertB64, function (res) {
-      if (res.success) {
-        const certserial = res.CertSerial
-        props.getRandom({ props: props, GZCA, certserial, ContainerName })
-      } else {
-        notification('error', res.msg)
-      }
-    });
-  }
-
-  return <Button
-    type="primary"
-    size="large"
-    style={{height:"50px",fontSize:"20px"}}
-    className={styles.submit}
-    onClick={() => initSocket()}
-    loading={props.loginLoading}
-  >登 录</Button>
 }
 
 const mapState = state => ({
-  loginLoading: state.login.loginLoading
+  loginLoading: state.login.loginLoading,
+  loginName: state.login.loginName,
+  password: state.login.password,
 })
 
 const mapDispatch = dispatch => ({
-  getRandom: params => {
-    const action = creators.getRandomAction(params);
+  onChangeName: params => {
+    const action = creators.onChangeNameAction(params);
     dispatch(action);
-  }
+  },
+  onChangePassword: params => {
+    const action = creators.onChangePasswordAction(params);
+    dispatch(action);
+  },
+  loginSubmit: params => {
+    const action = creators.loginSubmitAction(params);
+    dispatch(action);
+  },
 })
 
 export default withRouter(connect(mapState, mapDispatch)(LoginButton));

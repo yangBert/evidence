@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'antd';
 import { connect } from 'react-redux';
+import * as creators from '../store/creators';
 import { withRouter, Link } from 'react-router-dom';
 
 function Oper(props) {
@@ -9,8 +10,8 @@ function Oper(props) {
     <div>
       <Link
         to={{
-          pathname: "/evidence/detail",
-          state: { record: props.record }
+          pathname: "/user/add",
+          state: { editRecord: props.record }
         }}
       >
         <Button
@@ -18,10 +19,17 @@ function Oper(props) {
           type="primary"
           size="small"
           ghost
-        >详情</Button>
+        >修改</Button>
       </Link>
     </div >
   )
 }
 
-export default withRouter(connect(null, null)(Oper));
+const mapDispatch = dispatch => ({
+  // updateState: req => {
+  //   const action = creators.updateStateAction(req);
+  //   dispatch(action);
+  // },
+})
+
+export default withRouter(connect(null, mapDispatch)(Oper));

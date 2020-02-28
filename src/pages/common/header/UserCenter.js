@@ -3,14 +3,14 @@ import { Menu, Dropdown, Icon } from 'antd';
 import styles from 'pages/common/header/userCenter.module.css';
 import PropsContext from 'pages/index/props';
 import $$ from 'static/js/base.js';
-import * as creators from './store/creators';
+//import * as creators from './store/creators';
 import { connect } from 'react-redux';
 
 function UserCenter(props) {
   const propsGlobal = React.useContext(PropsContext);
   const getAdminInfo = props.getAdminInfo
   useEffect(() => {
-    getAdminInfo({ propsGlobal })
+    //getAdminInfo({ propsGlobal })
   }, [propsGlobal, getAdminInfo]);
 
   const menu = (
@@ -46,11 +46,11 @@ const mapState = state => ({
   adminInfo: state.header.adminInfo
 })
 
-const mapDispatch = dispatch => ({
-  getAdminInfo: req => {
-    const action = creators.getAdminInfoAction(req);
-    dispatch(action);
-  }
-})
+// const mapDispatch = dispatch => ({
+//   getAdminInfo: req => {
+//     const action = creators.getAdminInfoAction(req);
+//     dispatch(action);
+//   }
+// })
 
-export default connect(mapState, mapDispatch)(UserCenter);
+export default connect(mapState, null)(UserCenter);

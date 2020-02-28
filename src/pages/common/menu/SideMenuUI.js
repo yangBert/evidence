@@ -76,15 +76,21 @@ class SideMenuUI extends React.Component {
             </Link>
           </Menu.Item>
           <Menu.Item key="1">
-            <Link to="/evid/list">
-              <Icon type="home" />
+            <Link to="/evidence/list">
+              <Icon type="deployment-unit" />
               <span>存证管理</span>
             </Link>
           </Menu.Item>
           <Menu.Item key="2">
             <Link to="/app/list">
-              <Icon type="home" />
+              <Icon type="appstore" />
               <span>应用管理</span>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="3">
+            <Link to="/user/list">
+              <Icon type="team" />
+              <span>用户管理</span>
             </Link>
           </Menu.Item>
         </Menu>

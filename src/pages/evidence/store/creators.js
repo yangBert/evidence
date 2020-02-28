@@ -2,9 +2,9 @@ import * as types from './actionTypes';
 import * as requestURL from 'static/js/requestURL';
 import * as request from 'static/js/request';
 import spinningAction from 'pages/common/layer/spinning';
-import notification from 'pages/common/layer/notification';
 import createPagination from 'static/js/pagination';
 import { Modal } from 'antd'
+import sm3 from 'sm3';
 
 const initListAction = (list, pagination) => ({
   type: types.QUERY_LIST,
@@ -12,28 +12,24 @@ const initListAction = (list, pagination) => ({
   pagination
 })
 
-//改变editTitle
-const onChangeEditTitleAction = editTitle => ({
-  type: types.CHANGE_EDIT_TITLE,
-  editTitle
-})
-
-//改变editURL
-const onChangeEditURLAction = editURL => ({
-  type: types.CHANGE_EDIT_URL,
-  editURL
-})
-
-//改变editImageURL
-const onChangeEditImageURLAction = editImageURL => ({
-  type: types.CHANGE_EDIT_IMAGE_URL,
-  editImageURL
+const onChangeAppkeyAction = appkey => ({
+  type: types.CHANGE_APP_KEY,
+  appkey
 })
 
 
-const onChangeEditStatusAction = editStatus => ({
-  type: types.CHANGE_EDIT_STATUS,
-  editStatus
+const changeFileHashAction = fileHash => ({
+  type: types.CHANGE_FILE_HASH,
+  fileHash
+})
+
+const changeFileNameAction = fileName => ({
+  type: types.CHANGE_FILE_NAME,
+  fileName
+})
+const changeFileSizeAction = fileSize => ({
+  type: types.CHANGE_FILE_SIZE,
+  fileSize
 })
 
 //改变保存loading
@@ -42,31 +38,61 @@ const onChangeSaveLoadingAction = saveLoading => ({
   saveLoading
 })
 
-//保存和修改
+//区块链数据收集
+function collectData(d) {
+  const { fileHash, fileName, fileSize } = d
+  const appKey = document.getElementById("CONFIG_GLOBAL_APPKEY").value;
+  const secret = document.getElementById("CONFIG_GLOBAL_SECRET").value;
+  const evidenceData = JSON.stringify({ fileHash, fileName, fileSize })
+  const sign = sm3(appKey + evidenceData + secret)
+  return {
+    appKey,
+    evidenceData,
+    sign,
+  }
+}
+
+//调用区块链接口
+const createEvidenceAction = req => {
+  return dispatch => {
+    const url = requestURL.evidenceCreate
+    request.json(url, req.data, res => {
+      dispatch(onChangeSaveLoadingAction(false))
+      console.log("res", res)
+      if (res.data) {
+        Modal.success({
+          title: '存证编号',
+          content: res.data.data.bcHash,
+          okText: '确认',
+          onOk: () => {
+            req.props.history.goBack()
+          }
+        });
+      } else {
+        console.log("存证区块链：", res)
+      }
+    }, true)
+  }
+}
+
+//保存
 const saveAction = req => {
   return dispatch => {
-    dispatch(spinningAction(true))
-    const url = req.data.id ? requestURL.webManagerLinkUpdate : requestURL.webManagerLinkAdd
+    dispatch(onChangeSaveLoadingAction(true))
+    const url = requestURL.evidencesave
     request.json(url, req.data, res => {
-      dispatch(spinningAction(false))
       if (res.data) {
-        const { success, message } = res.data && res.data
-        if (success) {
-          Modal.success({
-            title: '系统提示',
-            content: message,
-            okText: '确认',
-            onOk: () => {
-              req.props.history.goBack()
-            }
-          });
+        const { code } = res.data
+        if (code === 0) {
+          const d = collectData(req.data)
+          dispatch(createEvidenceAction({ props: req.props, data: d }))
         } else {
-          notification('error', message)
+          req.props.history.push("")
         }
       } else {
-        req.props.history.push("/500")
+        req.props.history.push("")
       }
-    })
+    }, true)
   }
 }
 
@@ -74,48 +100,54 @@ const saveAction = req => {
 const queryListAction = req => {
   return dispatch => {
     dispatch(spinningAction(true))
-    request.json(requestURL.linkQueryLinksByPage, req.data, res => {
+    let reqData = req.data;
+    if (!reqData.startTime) {
+      reqData.startTime = "2000-02-19";
+      reqData.endTime = "2220-10-19";
+    }
+    request.json(requestURL.evidenceQueryByTime, reqData, res => {
       dispatch(spinningAction(false))
       if (res.data) {
-        const { success, message, data } = res.data && res.data
-        if (success) {
-          const action = initListAction(data.results, createPagination(data))
+        const { code, data, count } = res.data
+        if (code === 0) {
+          const action = initListAction(data, createPagination({
+            totalSize: count,
+            pageSize: reqData.pageSize,
+            pageNo: reqData.pageNo,
+          }))
           dispatch(action)
         } else {
-          notification('error', message)
+          req.props.history.push("")
         }
       } else {
-        req.props.history.push("/500")
+        req.props.history.push("")
       }
-    })
+    }, true)
   }
 }
 
-//修改状态
-const updateStateAction = req => {
-  return (dispatch,getState) => {
+const initAppListAction = appList => ({
+  type: types.INIT_APP_LIST,
+  appList
+})
+
+const queryFetchAppkeyAction = req => {
+  return dispatch => {
     dispatch(spinningAction(true))
-    const url = requestURL.webManagerLinkChangeStatus
-    request.json(url, req.data, res => {
+    request.json(requestURL.evidenceQueryApp, req.data, res => {
       dispatch(spinningAction(false))
       if (res.data) {
-        const { success, message } = res.data && res.data
-        if (success) {
-          const pagination = getState().link.pagination
-          const params = {
-            ...getState().link.params,
-            pageNo: pagination.current,
-            pageSize: pagination.pageSize
-          }
-          dispatch(queryListAction({ props: req.props, data: params }));
-
+        const { code, data } = res.data
+        if (code === 0) {
+          const action = initAppListAction(data, createPagination(data))
+          dispatch(action)
         } else {
-          notification('error', message)
+          req.props.history.push("")
         }
       } else {
-        req.props.history.push("/500")
+        req.props.history.push("")
       }
-    })
+    }, true)
   }
 }
 
@@ -127,13 +159,12 @@ const createChangeParamsAction = params => ({
 
 export {
   queryListAction,
-  onChangeEditTitleAction,
-  onChangeEditURLAction,
-  onChangeEditImageURLAction,
-  onChangeEditStatusAction,
+  onChangeAppkeyAction,
+  queryFetchAppkeyAction,
+  changeFileNameAction,
+  changeFileHashAction,
+  changeFileSizeAction,
   saveAction,
   onChangeSaveLoadingAction,
   createChangeParamsAction,
-  updateStateAction
-
 }

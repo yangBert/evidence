@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Icon, DatePicker, Select } from 'antd';
+import { Button, Input, Icon, Select } from 'antd';
 import { connect } from 'react-redux';
 import * as creators from '../store/creators';
 import styles from '../css/SearchForm.module.css';
-import * as config from '../config';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
@@ -60,9 +59,9 @@ function SearchForm(props) {
 
   function mapStatus() {
     let statusArr = [];
-    Object.keys(config.status).forEach(k => {
-      statusArr.push({ k, v: config.status[k] })
-    })
+    // Object.keys(config.status).forEach(k => {
+    //   statusArr.push({ k, v: config.status[k] })
+    // })
     return statusArr;
   }
 
@@ -71,7 +70,7 @@ function SearchForm(props) {
       <div className={`${styles.form}`}>
         <div className="clearfix">
           <div className={`${styles.formLine} pullLeft`}>
-            <label className="pullLeft">应用appkey:</label>
+            <label className="pullLeft">用户名:</label>
             <div className={`${styles.inline} pullLeft`}>
               <Input
                 allowClear
@@ -81,6 +80,17 @@ function SearchForm(props) {
             </div>
           </div>
           <div className={`${styles.formLine} pullLeft`}>
+            <label className="pullLeft">用户类型:</label>
+            <div className={`${styles.inline} pullLeft`}>
+              <Select value={status} style={{ width: "100%" }} onChange={value => setStatus(value)}>
+                <Option value="">请选择</Option>
+                {
+                  mapStatus().map(item => {
+                    return <Option value={item.k} key={item.k}>{item.v}</Option>
+                  })
+                }
+              </Select>
+            </div>
             &nbsp;&nbsp;
             <Button onClick={() => search()} type="primary">
               <Icon type="search" />查询
@@ -124,8 +134,8 @@ function SearchForm(props) {
 }
 
 const mapState = state => ({
-  params: state.app.params,
-  spinning: state.app.spinning,
+  params: state.evidence.params,
+  spinning: state.evidence.spinning,
 })
 
 const mapDispatch = dispatch => ({

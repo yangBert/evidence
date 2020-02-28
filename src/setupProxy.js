@@ -1,21 +1,19 @@
 const proxy = require("http-proxy-middleware");
 
 module.exports = function (app) {
+
     app.use(proxy("/api", {
-        target: "http://58.16.67.132:8884", //配置你要请求的服务器地址
+        target: "http://192.168.1.13:80",
+        changeOrigin: true,
+        pathRewrite: {
+            '^/api': '/',     // rewrite path 实际代理访问的路径会去掉 api 前缀
+        },
+    }))
+    app.use(proxy("/XYL", {
+        target: "http://39.105.49.112:80",
         changeOrigin: true,
     }))
-    app.use(proxy("/web", {
-        target: "http://58.16.67.132:8884",
-        changeOrigin: true,
-    }))
-    app.use(proxy("/evidence", {
-        target: "https://ip:port/",
-        changeOrigin: true,
-    }))
-    app.use(proxy("/uam-manager_img", {
-        target: "http://uam-s.oss.gzdata.com.cn",
-        changeOrigin: true,
-    }))
+
+
 };
 

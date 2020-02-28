@@ -1,16 +1,16 @@
 import React from 'react';
-import {Input, Modal } from 'antd';
+import { Input, Modal } from 'antd';
 import { connect } from 'react-redux';
 import * as creators from '../store/creators';
 
 function Add(props) {
 
   function handleOk() {
-    const reg = /^[0-9A-Za-z]{10}$/g.test(props.appID)
-    if(!reg){
+    const reg = /^[0-9A-Za-z]{10,30}$/g.test(props.appID)
+    if (!reg) {
       Modal.error({
         title: '系统提示',
-        content: "请输入10位：字母大小写或数字",
+        content: "请输入10~30位：字母大小写、数字",
         okText: '确认',
       });
       return;
@@ -18,33 +18,33 @@ function Add(props) {
     const data = {
       appID: props.appID,
     }
-    props.submitFn({data})
+    props.submitFn({ props, data })
   }
 
-    return (
-      <div>
-        <Modal
-          title="新增应用"
-          visible={props.visible}
-          onOk={() => handleOk()}
-          onCancel={() => props.changeModal(false)}
-          confirmLoading={props.saveLoading}
-        >
-          <p>appID规则：数字、大小写字母10位<br></br></p>
-          <Input 
-            allowClear
-            onChange={e => props.setAppID(e.target.value)}
-            value={props.appID}
+  return (
+    <div>
+      <Modal
+        title="新增应用"
+        visible={props.visible}
+        onOk={() => handleOk()}
+        onCancel={() => props.changeModal(false)}
+        confirmLoading={props.saveLoading}
+      >
+        <p>appID规则：数字、大小写字母10到30位<br></br></p>
+        <Input
+          allowClear
+          onChange={e => props.setAppID(e.target.value)}
+          value={props.appID}
           placeholder="请输入appID" />
-        </Modal>
-      </div>
-    )
+      </Modal>
+    </div>
+  )
 }
 
 const mapState = state => ({
   spinning: state.app.spinning,
-  visible:state.app.visible,
-  appID:state.app.addAppID,
+  visible: state.app.visible,
+  appID: state.app.addAppID,
   saveLoading: state.app.saveLoading,
 })
 
@@ -62,7 +62,7 @@ const mapDispatch = dispatch => ({
     dispatch(action);
   },
 
-  
+
 })
 
 export default connect(mapState, mapDispatch)(Add);

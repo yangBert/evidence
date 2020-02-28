@@ -2,7 +2,6 @@ import * as types from './actionTypes';
 import * as requestURL from 'static/js/requestURL';
 import * as request from 'static/js/request';
 import spinningAction from 'pages/common/layer/spinning';
-import notification from 'pages/common/layer/notification';
 import createPagination from 'static/js/pagination';
 import { Modal } from 'antd'
 
@@ -12,17 +11,26 @@ const initListAction = (list, pagination) => ({
   pagination
 })
 
-const setAppIDAction = addAppID => ({
-  type: types.SET_APP_ID,
-  addAppID
+const setNameAction = name => ({
+  type: types.SET_NAME,
+  name
 })
 
-//弹出层
-const changeModalAction = visible => ({
-  type: types.SCHANGE_VISIBLE,
-  visible
+const setTypeAction = userType => ({
+  type: types.SET_TYPE,
+  userType
 })
 
+const setPasswordAction = password => ({
+  type: types.SET_PASSWORD,
+  password
+})
+
+
+const setRePasswordAction = rePassword => ({
+  type: types.SET_RE_PASSWORD,
+  rePassword
+})
 
 //改变保存loading
 const onChangeSaveLoadingAction = saveLoading => ({
@@ -31,28 +39,28 @@ const onChangeSaveLoadingAction = saveLoading => ({
 })
 
 //保存
-const submitFnAction = req => {
+const saveAction = req => {
   return dispatch => {
-    dispatch(onChangeSaveLoadingAction(true))
-    const url = requestURL.evidenceCreatApp
+    dispatch(spinningAction(true))
+    const url = requestURL.evidenceAddUser
     request.json(url, req.data, res => {
-      dispatch(onChangeSaveLoadingAction(false))
-      dispatch(changeModalAction(false))
+      dispatch(spinningAction(false))
       if (res.data) {
-        const { code, msg } = res.data
+        const { code, msg } = res.data && res.data
         if (code === 0) {
-          notification('success', msg)
-          dispatch(queryListAction({ data: { pageSize: 10, pageNo: 1 } }))
-        } else {
           Modal.success({
             title: '系统提示',
             content: msg,
             okText: '确认',
-            onOk: () => { }
+            onOk: () => {
+              req.props.history.goBack()
+            }
           });
+        } else {
+          req.props.history.push("/")
         }
       } else {
-        req.props.history.push("")
+        req.props.history.push("/")
       }
     }, true)
   }
@@ -62,12 +70,11 @@ const submitFnAction = req => {
 const queryListAction = req => {
   return dispatch => {
     dispatch(spinningAction(true))
-    console.log(req)
     const reqData = req.data
-    request.json(requestURL.evidenceQueryApp, reqData, res => {
+    request.json(requestURL.evidenceGetList, req.data, res => {
       dispatch(spinningAction(false))
       if (res.data) {
-        const { code, data, count } = res.data
+        const { code, data, count } = res.data && res.data
         if (code === 0) {
           const action = initListAction(data, createPagination({
             totalSize: count,
@@ -76,10 +83,10 @@ const queryListAction = req => {
           }))
           dispatch(action)
         } else {
-          req.props.history.push("")
+          req.props.history.push("/")
         }
       } else {
-        req.props.history.push("")
+        req.props.history.push("/")
       }
     }, true)
   }
@@ -93,9 +100,12 @@ const createChangeParamsAction = params => ({
 
 export {
   queryListAction,
+  saveAction,
   onChangeSaveLoadingAction,
   createChangeParamsAction,
-  setAppIDAction,
-  changeModalAction,
-  submitFnAction
+
+  setNameAction,
+  setTypeAction,
+  setPasswordAction,
+  setRePasswordAction,
 }

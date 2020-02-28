@@ -7,11 +7,10 @@ const defaultState = {
   spinning: false,
   saveLoading: false,
   params: {},
-  fileHash: "",
-  fileSize: 0,
-  fileName: "",
-  appkey: "",
-  appList: [],
+  name: "",
+  userType: "",
+  password: "",
+  rePassword: "",
 };
 
 export default (state = defaultState, action) => {
@@ -27,23 +26,20 @@ export default (state = defaultState, action) => {
     case types.CHANGE_SEARCH_PARAMS:
       newState.params = action.params
       break;
-    case types.CHANGE_FILE_HASH:
-      newState.fileHash = action.fileHash
-      break;
-    case types.CHANGE_FILE_NAME:
-      newState.fileName = action.fileName
-      break;
-    case types.CHANGE_FILE_SIZE:
-      newState.fileSize = action.fileSize
-      break;
-    case types.CHANGE_APP_KEY:
-      newState.appkey = action.appkey
-      break;
-    case types.INIT_APP_LIST:
-      newState.appList = action.appList
-      break;
     case types.CHANGE_SAVE_LOADING:
       newState.saveLoading = action.saveLoading
+      break;
+    case types.SET_NAME:
+      newState.name = action.name
+      break;
+    case types.SET_TYPE:
+      newState.userType = action.userType
+      break;
+    case types.SET_PASSWORD:
+      newState.password = action.password
+      break;
+    case types.SET_RE_PASSWORD:
+      newState.rePassword = action.rePassword
       break;
     default:
       break;

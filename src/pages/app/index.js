@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
-import { Table, Spin, Button, Icon, Tag } from 'antd';
+import { Table, Spin, Button, Icon } from 'antd';
 import { connect } from 'react-redux';
 import * as creators from './store/creators';
 import Add from './components/Add';
-import SearchForm from './components/SearchForm';
 import styles from './css/UserList.module.css';
-import { Link } from 'react-router-dom';
 import $$ from 'static/js/base';
 import Oper from './components/Operation';
 
 const columns = [
-  { title: 'appID', dataIndex: 'appID', key: 'appID', align: 'center' },
+  { title: '应用appkey', dataIndex: 'appID', key: 'appID', align: 'center' },
+
+  {
+    title: '应用密钥', dataIndex: 'key', key: 'key', align: 'center'
+  },
   {
     title: '创建时间', dataIndex: 'time', key: 'time', align: 'center',
     render: time => (
       <span>{time && $$.getHours(time)}</span>
     )
-  },
-  {
-    title: '应用密钥', dataIndex: 'key', key: 'key', align: 'center'
   },
   {
     title: '操作',
@@ -60,13 +59,13 @@ class List extends Component {
       <div className={`${styles.pageContet} pageContentColor`}>
         <Spin tip="Loading..." spinning={this.props.spinning}>
           <Add />
-          <SearchForm />
+          {/* <SearchForm /> */}
           <div className={styles.buttonForm}>
-              <Button
-                type="primary"
-                className={styles.addButton}
-                onClick={() => this.props.changeModal(true)}
-              ><Icon type="plus" />新增</Button>
+            <Button
+              type="primary"
+              className={styles.addButton}
+              onClick={() => this.props.changeModal(true)}
+            ><Icon type="plus" />新增</Button>
           </div>
           <Table
             bordered
@@ -88,7 +87,7 @@ const mapState = state => ({
   pagination: state.app.pagination,
   spinning: state.app.spinning,
   params: state.app.params,
-  visible:state.app.visible,
+  visible: state.app.visible,
 })
 
 const mapDispatch = dispatch => ({

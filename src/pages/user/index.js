@@ -1,34 +1,31 @@
 import React, { Component } from 'react';
-import { Table, Spin } from 'antd';
+import { Table, Spin, Button, Icon } from 'antd';
 import { connect } from 'react-redux';
 import * as creators from './store/creators';
-import SearchForm from './components/SearchForm';
 import styles from './css/UserList.module.css';
-
+import { Link } from 'react-router-dom';
 import $$ from 'static/js/base';
-import Oper from './components/Operation';
 
 const columns = [
-  { title: '应用appkey', dataIndex: 'appID', key: 'appID', align: 'center' },
-  { title: '存证ID', dataIndex: 'id', key: 'id', align: 'center' },
+  { title: '用户名', dataIndex: 'name', key: 'name', align: 'center' },
+  {
+    title: '用户类型', dataIndex: 'type', key: 'type', align: 'center',
+    render: type => (
+      <span>{type === 0 ? '管理员' : '普通操作员'}</span>
+    )
+  },
   {
     title: '创建时间', dataIndex: 'time', key: 'time', align: 'center',
-    render: createdAt => (
-      <span>{createdAt && $$.getHours(createdAt)}</span>
+    render: time => (
+      <span>{time && $$.getHours(time)}</span>
     )
   },
-  {
-    title: '文件大小', dataIndex: 'fileSize', key: 'fileSize', align: 'center',
-    render: fileSize => (
-      <span>{fileSize ? fileSize + "KB" : ""}</span>
-    )
-  },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    key: 'operation',
-    render: (text, record) => <Oper text={text} record={record} />,
-  },
+  // {
+  //   title: '操作',
+  //   dataIndex: 'operation',
+  //   key: 'operation',
+  //   render: (text, record) => <Oper text={text} record={record} />,
+  // },
 ];
 
 class List extends Component {
@@ -61,7 +58,15 @@ class List extends Component {
     return (
       <div className={`${styles.pageContet} pageContentColor`}>
         <Spin tip="Loading..." spinning={this.props.spinning}>
-          <SearchForm />
+          {/* <SearchForm /> */}
+          <div className={styles.buttonForm}>
+            <Link to="/user/add">
+              <Button
+                type="primary"
+                className={styles.addButton}
+              ><Icon type="plus" />新增</Button>
+            </Link>
+          </div>
           <Table
             bordered
             columns={columns}
@@ -78,10 +83,10 @@ class List extends Component {
 }
 
 const mapState = state => ({
-  list: state.evidence.list,
-  pagination: state.evidence.pagination,
-  spinning: state.evidence.spinning,
-  params: state.evidence.params,
+  list: state.user.list,
+  pagination: state.user.pagination,
+  spinning: state.user.spinning,
+  params: state.user.params,
 })
 
 const mapDispatch = dispatch => ({

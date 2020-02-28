@@ -3,11 +3,13 @@ import headReducer from 'pages/common/header/store/reducer';
 import loginReducer from 'pages/login/store/reducer';
 import appReducer from 'pages/app/store/reducer';
 import evidenceReducer from 'pages/evidence/store/reducer';
+import userReducer from 'pages/user/store/reducer';
 
 export default {
   login: loginReducer,
   slider: sliderReducer,
   header: headReducer,
   app: appReducer,
-  evidence:evidenceReducer
+  evidence: evidenceReducer,
+  user: userReducer
 };

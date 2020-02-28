@@ -12,33 +12,26 @@ function authRedirect(message) {
   notification("error", message)
 }
 
-function configFn(url, data, method) {
+function configFn(url, data, method, isToken) {
   const config = {
     url,
     method,
     data,
   }
-  const AuthToken = $$.token.get()
-  const a = url.split(".")
-  const bl = a[a.length - 1] !== "htm"
-  if (AuthToken && bl) {
+  const TOKEN = $$.token.get()
+  if (isToken) {
     config.headers = {}
-    config.headers.AuthToken = AuthToken
+    config.headers["E-token"] = TOKEN
   }
   return config
 }
 
-function json(requestURL, requestData, callback) {
-  const config = configFn(requestURL, requestData, 'post')
+function json(requestURL, requestData, callback, isToken) {
+  const config = configFn(requestURL, requestData, 'POST', isToken)
   axios(config).then(res => {
-    if (res.data && !res.data.success && res.data.errCode === '400') {
-      authRedirect(res.data.message)
-    } else {
-      callback(res)
-    }
+    callback(res)
   }).catch((err) => {
-    console.log(err);
-    callback(errorMsg);
+    callback(err);
   })
 }
 
