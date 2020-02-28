@@ -16,7 +16,7 @@ function Login(props) {
           <LoginButton loginProps={props} />
         </div>
       </div>
-      <div className={styles.footer}>sdfsdfsdfsdfsdf
+      <div className={styles.footer}>
         {copyright}<img src={policeImage} alt="copyright" />
       </div>
     </div>
