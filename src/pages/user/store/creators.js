@@ -57,7 +57,12 @@ const saveAction = req => {
             }
           });
         } else {
-          req.props.history.push("/")
+          Modal.error({
+            title: '系统提示',
+            content: msg,
+            okText: '确认',
+            onOk: () => { }
+          });
         }
       } else {
         req.props.history.push("/")
@@ -74,7 +79,7 @@ const queryListAction = req => {
     request.json(requestURL.evidenceGetList, req.data, res => {
       dispatch(spinningAction(false))
       if (res.data) {
-        const { code, data, count } = res.data && res.data
+        const { code, data, count, msg } = res.data && res.data
         if (code === 0) {
           const action = initListAction(data, createPagination({
             totalSize: count,
@@ -83,7 +88,12 @@ const queryListAction = req => {
           }))
           dispatch(action)
         } else {
-          req.props.history.push("/")
+          Modal.error({
+            title: '系统提示',
+            content: msg,
+            okText: '确认',
+            onOk: () => { }
+          });
         }
       } else {
         req.props.history.push("/")

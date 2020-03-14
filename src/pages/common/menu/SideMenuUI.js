@@ -93,6 +93,12 @@ class SideMenuUI extends React.Component {
               <span>用户管理</span>
             </Link>
           </Menu.Item>
+          <Menu.Item key="4">
+            <Link to="/file/list">
+              <Icon type="team" />
+              <span>文件管理</span>
+            </Link>
+          </Menu.Item>
         </Menu>
       </div>
     );

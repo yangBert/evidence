@@ -38,6 +38,40 @@ const onChangeSaveLoadingAction = saveLoading => ({
   saveLoading
 })
 
+//保存
+const saveAction = req => {
+  return dispatch => {
+    const url = requestURL.evidencesave
+    request.json(url, req.data, res => {
+      dispatch(onChangeSaveLoadingAction(false))
+      console.log("保存", res)
+      if (res.data) {
+        const { code, msg } = res.data
+        if (code === 0) {
+          Modal.success({
+            title: '系统提示',
+            content: msg,
+            okText: '确认',
+            onOk: () => {
+              req.props.history.goBack();
+            }
+          });
+        } else {
+          dispatch(onChangeSaveLoadingAction(false))
+          Modal.error({
+            title: '系统提示',
+            content: msg,
+            okText: '确认',
+            onOk: () => { }
+          });
+        }
+      } else {
+        req.props.history.push("")
+      }
+    }, true)
+  }
+}
+
 //区块链数据收集
 function collectData(d) {
   const { fileHash, fileName, fileSize } = d
@@ -54,20 +88,17 @@ function collectData(d) {
 
 //调用区块链接口
 const createEvidenceAction = req => {
+  const reqData = collectData(req.data)
   return dispatch => {
     const url = requestURL.evidenceCreate
-    request.json(url, req.data, res => {
-      dispatch(onChangeSaveLoadingAction(false))
+    dispatch(onChangeSaveLoadingAction(true))
+    request.json(url, reqData, res => {
       console.log("res", res)
       if (res.data) {
-        Modal.success({
-          title: '存证编号',
-          content: res.data.data.bcHash,
-          okText: '确认',
-          onOk: () => {
-            req.props.history.goBack()
-          }
-        });
+        const bcHash = res.data.data.bcHash
+        const saveData = req.data;
+        saveData.id = bcHash
+        dispatch(saveAction({ props: req.props, data: saveData }))
       } else {
         console.log("存证区块链：", res)
       }
@@ -75,28 +106,6 @@ const createEvidenceAction = req => {
   }
 }
 
-//保存
-const saveAction = req => {
-  return dispatch => {
-    dispatch(onChangeSaveLoadingAction(true))
-    const url = requestURL.evidencesave
-    request.json(url, req.data, res => {
-      if (res.data) {
-        const { code } = res.data
-        if (code === 0) {
-          const d = collectData(req.data)
-          dispatch(createEvidenceAction({ props: req.props, data: d }))
-        } else {
-          req.props.history.push("")
-        }
-      } else {
-        req.props.history.push("")
-      }
-    }, true)
-  }
-}
-
-//查询
 const queryListAction = req => {
   return dispatch => {
     dispatch(spinningAction(true))
@@ -107,8 +116,9 @@ const queryListAction = req => {
     }
     request.json(requestURL.evidenceQueryByTime, reqData, res => {
       dispatch(spinningAction(false))
+      console.log("res", res)
       if (res.data) {
-        const { code, data, count } = res.data
+        const { code, data, count, msg } = res.data
         if (code === 0) {
           const action = initListAction(data, createPagination({
             totalSize: count,
@@ -117,7 +127,12 @@ const queryListAction = req => {
           }))
           dispatch(action)
         } else {
-          req.props.history.push("")
+          Modal.error({
+            title: '系统提示',
+            content: msg,
+            okText: '确认',
+            onOk: () => { }
+          });
         }
       } else {
         req.props.history.push("")
@@ -164,7 +179,7 @@ export {
   changeFileNameAction,
   changeFileHashAction,
   changeFileSizeAction,
-  saveAction,
+  createEvidenceAction,
   onChangeSaveLoadingAction,
   createChangeParamsAction,
 }

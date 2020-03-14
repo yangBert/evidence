@@ -1,29 +1,22 @@
 import React, { Component } from 'react';
-import { Table, Spin } from 'antd';
+import { Table, Spin, Button, Icon } from 'antd';
 import { connect } from 'react-redux';
 import * as creators from './store/creators';
-import SearchForm from './components/SearchForm';
 import styles from './css/UserList.module.css';
-
+import { Link } from 'react-router-dom';
 import $$ from 'static/js/base';
 import Oper from './components/Operation';
 
 const columns = [
-  { title: '存证编号', dataIndex: 'id', key: 'id' },
-  { title: '应用appkey', dataIndex: 'appID', key: 'appID' },
+  { title: '文件编码', dataIndex: 'id', key: 'id', align: 'center' },
   {
-    title: '文件大小', dataIndex: 'fileSize', key: 'fileSize',
-    render: fileSize => (
-      <span>{fileSize ? fileSize + "KB" : ""}</span>
-    )
+    title: '文件名称', dataIndex: 'fileName', key: 'fileName', align: 'center'
   },
+  { title: '上传人', dataIndex: 'userName', key: 'userName', align: 'center' },
   {
-    title: '创建人', dataIndex: 'userName', key: 'userName'
-  },
-  {
-    title: '创建时间', dataIndex: 'time', key: 'time',
-    render: createdAt => (
-      <span>{createdAt && $$.getHours(createdAt)}</span>
+    title: '上传时间', dataIndex: 'time', key: 'time', align: 'center',
+    render: time => (
+      <span>{time && $$.getHours(time)}</span>
     )
   },
   {
@@ -64,7 +57,15 @@ class List extends Component {
     return (
       <div className={`${styles.pageContet} pageContentColor`}>
         <Spin tip="Loading..." spinning={this.props.spinning}>
-          <SearchForm />
+          {/* <SearchForm /> */}
+          <div className={styles.buttonForm}>
+            <Link to="/file/add">
+              <Button
+                type="primary"
+                className={styles.addButton}
+              ><Icon type="plus" />新增文件</Button>
+            </Link>
+          </div>
           <Table
             bordered
             columns={columns}
@@ -81,10 +82,10 @@ class List extends Component {
 }
 
 const mapState = state => ({
-  list: state.evidence.list,
-  pagination: state.evidence.pagination,
-  spinning: state.evidence.spinning,
-  params: state.evidence.params,
+  list: state.file.list,
+  pagination: state.file.pagination,
+  spinning: state.file.spinning,
+  params: state.file.params,
 })
 
 const mapDispatch = dispatch => ({

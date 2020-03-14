@@ -1,30 +1,82 @@
 import React, { Component } from 'react';
-import { Spin, Input, Button, message, Card, Form, Select, Icon } from 'antd';
+import { Spin, Input, Button, message, Card, Form, Icon, Select } from 'antd';
 import { connect } from 'react-redux';
 import * as creators from '../store/creators';
 import styles from '../css/add.module.css';
 import spinningAction from 'pages/common/layer/spinning';
 import sm3 from 'sm3';
-import tools from 'static/js/tools';
-
+//import tools from 'static/js/tools';
+import CryptoJS from 'crypto-js';
 const { TextArea } = Input;
 const { Option } = Select;
+function Utf8ArrayToStr(array) {
+  var out, i, len, c;
+  var char2, char3;
 
+  out = "";
+  len = array.length;
+  i = 0;
+  while (i < len) {
+    c = array[i++];
+    switch (c >> 4) {
+      case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+        // 0xxxxxxx
+        out += String.fromCharCode(c);
+        break;
+      case 12: case 13:
+        // 110x xxxx   10xx xxxx
+        char2 = array[i++];
+        out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+        break;
+      case 14:
+        // 1110 xxxx  10xx xxxx  10xx xxxx
+        char2 = array[i++];
+        char3 = array[i++];
+        out += String.fromCharCode(((c & 0x0F) << 12) |
+          ((char2 & 0x3F) << 6) |
+          ((char3 & 0x3F) << 0));
+        break;
+    }
+  }
+
+  return out;
+}
+
+function buf2hex(buffer) { // buffer is an ArrayBuffer
+  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+}
+
+// 左补0到指定长度
+function leftPad(str, totalLength) {
+  const len = str.length;
+  return Array(totalLength > len ? ((totalLength - len) + 1) : 0).join(0) + str;
+}
 var hashFile = null
 class Add extends Component {
 
   componentDidMount() {
+    this.props.queryFetchAppkey({
+      props: this.props,
+      data: {}
+    })
     hashFile = document.getElementById("hash-file-hidden")
     hashFile.onchange = e => {
       const file = hashFile.files[0]
       this.props.changeFileName(file.name)
       this.props.changeFileSize(file.size)
       this.props.changePageLoading(true)
-      tools.reads(file, base64url => {
-        this.props.changePageLoading(false)
-        this.props.changeFileHash(sm3(base64url))
-      });
 
+      let reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = () => {
+        var wordArray = CryptoJS.lib.WordArray.create(reader.result);
+        var hash = CryptoJS.SHA1(wordArray).toString();
+        console.log("sha1 hash", hash)
+        // let encodedString = String.fromCharCode.apply(null, new Uint8Array(reader.result));
+        //console.log("hash sm3", sm3(encodedString))
+        this.props.changeFileHash(hash)
+        this.props.changePageLoading(false)
+      };
     }
   }
 
@@ -50,19 +102,12 @@ class Add extends Component {
       }
     }
 
-    this.props.save(req)
+    this.props.createEvidence(req)
   }
 
   handleClick() {
     hashFile.click()
   }
-
-  fetchAppkey = value => {
-    this.props.queryFetchAppkey({
-      props: this.props,
-      data: { appIDs: value }
-    })
-  };
 
   render() {
     return (
@@ -74,19 +119,17 @@ class Add extends Component {
                 <div className={`${styles.formBlock} pullLeft`}><label className="pullLeft">应用appkey：</label>
                   <div className={`${styles.inline} pullLeft`}>
                     <Select
-                      showSearch
                       value={this.props.appkey}
-                      placeholder="应用appkey"
-                      notFoundContent={this.props.fetching ? <Spin size="small" /> : null}
-                      filterOption={false}
-                      onSearch={this.fetchAppkey}
                       onChange={value => this.props.onChangeAppkey(value)}
-                      style={{ width: '100%' }}
                     >
-                      {
-                        this.props.appList.map(item => (
-                          <Option key={item.appID} value={item.appID}>{item.appID}</Option>
-                        ))}
+                      <Option value="">请选择</Option>
+                      {this.props.appList.map(item => {
+                        return (
+                          <Option value={item.appID} key={item.appID}>
+                            {item.appID}
+                          </Option>
+                        );
+                      })}
                     </Select>
                   </div>
                 </div>
@@ -144,8 +187,8 @@ const mapState = state => ({
 })
 
 const mapDispatch = dispatch => ({
-  save: req => {
-    const action = creators.saveAction(req);
+  createEvidence: req => {
+    const action = creators.createEvidenceAction(req);
     dispatch(action);
   },
   onChangeAppkey: value => {

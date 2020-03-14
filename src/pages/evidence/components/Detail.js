@@ -11,7 +11,8 @@ function Detail(props) {
       fileHash,
       fileName,
       fileSize,
-      time
+      time,
+      userName
     } = props.location.state.record;
   }
   return (
@@ -20,13 +21,14 @@ function Detail(props) {
         <div className="pageContentColor">
           <Card title="证据详情" bordered={false}>
             <Descriptions>
-              <Descriptions.Item label="账号">{appID}</Descriptions.Item>
+              <Descriptions.Item label="应用appkey">{appID}</Descriptions.Item>
               <Descriptions.Item label="文件名">{fileName}</Descriptions.Item>
               <Descriptions.Item label="文件大小">{fileSize + "kb"}</Descriptions.Item>
-              <Descriptions.Item label="最后登录时间">{$$.getHours(time)}</Descriptions.Item>
+              <Descriptions.Item label="创建人">{userName}</Descriptions.Item>
+              <Descriptions.Item label="创建时间">{$$.getHours(time)}</Descriptions.Item>
             </Descriptions>
             <Descriptions>
-              <Descriptions.Item label="存证ID">{id}</Descriptions.Item>
+              <Descriptions.Item label="存证编号">{id}</Descriptions.Item>
             </Descriptions>
             <Descriptions>
               <Descriptions.Item label="文件摘要值">{fileHash}</Descriptions.Item>

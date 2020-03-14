@@ -13,6 +13,11 @@ export const evidenceGetList = "/api/evidence/getList";
 export const evidenceAddUser = "/api/evidence/addUser";
 export const evidenceLogin = "/api/login";
 
+//文件管理
+export const evidenceQueryFile = "/api/evidence/queryFile";
+export const evidenceSaveFile = "/api/evidence/saveFile";
+export const evidenceGetFile = "/api/evidence/getFile";
+
 
 
 

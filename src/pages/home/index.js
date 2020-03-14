@@ -1,34 +1,27 @@
 import React, { Component } from 'react';
-import { Line, StepLine, PercentageStackBar } from '@antv/g2plot';
+import { Line, Radar, Waterfall, Pie } from '@antv/g2plot';
 import styles from './style.module.css';
-import axios from 'axios';
 
 function plot1() {
   const data = [
-    { year: '1991', value: 3 },
-    { year: '1992', value: 4 },
-    { year: '1993', value: 3.5 },
-    { year: '1994', value: 5 },
-    { year: '1995', value: 4.9 },
-    { year: '1996', value: 6 },
-    { year: '1997', value: 7 },
-    { year: '1998', value: 9 },
-    { year: '1999', value: 13 },
+    { year: '第一季度', value: 50 },
+    { year: '第二季度', value: 55 },
+    { year: '第三季度', value: 60 },
+    { year: '第四季度', value: 90 },
   ];
 
   const linePlot = new Line(document.getElementById('plot1'), {
     title: {
-      visible: true,
-      text: '带数据点的折线图',
+      visible: false,
+      text: '2019年统计',
     },
     description: {
       visible: true,
-      text: '将折线图上的每一个数据点显示出来，作为辅助阅读。',
     },
     forceFit: true,
     padding: 'auto',
     data,
-    theme: 'dark',
+    //theme: 'dark',
     xField: 'year',
     yField: 'value',
     point: {
@@ -45,199 +38,121 @@ function plot1() {
 
 function plot2() {
   const data = [
-    { year: '1991', value: 3 },
-    { year: '1992', value: 4 },
-    { year: '1993', value: 3.5 },
-    { year: '1994', value: 5 },
-    { year: '1995', value: 4.9 },
-    { year: '1996', value: 6 },
-    { year: '1997', value: 7 },
-    { year: '1998', value: 9 },
-    { year: '1999', value: 13 },
-  ];
+    {
+      item: '第四季度',
+      score: 90,
+    },
+    {
+      item: '第二季度',
+      score: 55,
+    },
+    {
+      item: '第三季度',
+      score: 60,
+    },
 
-  const step = new StepLine(document.getElementById('plot2'), {
+    {
+      item: '第一季度',
+      score: 50,
+    },
+  ];
+  const radarPlot = new Radar(document.getElementById('plot2'), {
     title: {
-      visible: true,
-      text: '带数据点的折线图',
+      visible: false,
+      text: '2019年统计',
     },
-    description: {
-      visible: true,
-      text: '将折线图上的每一个数据点显示出来，作为辅助阅读。',
-    },
-    forceFit: true,
-    padding: 'auto',
     data,
-    theme: 'dark',
-    xField: 'year',
-    yField: 'value',
-    step: 'hvh', // 可以选择 hv, vh, hvh, vhv
+    angleField: 'item',
+    radiusField: 'score',
+    radiusAxis: {
+      gridType: 'arc',
+      gridAlternateColor: 'rgba(0, 0, 0, 0.04)',
+    },
+    area: {
+      visible: false,
+    },
     point: {
       visible: true,
     },
-    label: {
-      visible: true,
-      type: 'point',
-    },
   });
+  radarPlot.render();
 
-  step.render();
 }
 
 function plot3() {
   const data = [
-    {
-      country: 'Asia',
-      year: '1750',
-      value: 502,
-    },
-    {
-      country: 'Asia',
-      year: '1800',
-      value: 635,
-    },
-    {
-      country: 'Asia',
-      year: '1850',
-      value: 809,
-    },
-    {
-      country: 'Asia',
-      year: '1900',
-      value: 947,
-    },
-    {
-      country: 'Asia',
-      year: '1950',
-      value: 1402,
-    },
-    {
-      country: 'Asia',
-      year: '1999',
-      value: 3634,
-    },
-    {
-      country: 'Asia',
-      year: '2050',
-      value: 5268,
-    },
-    {
-      country: 'Africa',
-      year: '1750',
-      value: 106,
-    },
-    {
-      country: 'Africa',
-      year: '1800',
-      value: 107,
-    },
-    {
-      country: 'Africa',
-      year: '1850',
-      value: 111,
-    },
-    {
-      country: 'Africa',
-      year: '1900',
-      value: 133,
-    },
-    {
-      country: 'Africa',
-      year: '1950',
-      value: 221,
-    },
-    {
-      country: 'Africa',
-      year: '1999',
-      value: 767,
-    },
-    {
-      country: 'Africa',
-      year: '2050',
-      value: 1766,
-    },
-    {
-      country: 'Europe',
-      year: '1750',
-      value: 163,
-    },
-    {
-      country: 'Europe',
-      year: '1800',
-      value: 203,
-    },
-    {
-      country: 'Europe',
-      year: '1850',
-      value: 276,
-    },
-    {
-      country: 'Europe',
-      year: '1900',
-      value: 408,
-    },
-    {
-      country: 'Europe',
-      year: '1950',
-      value: 547,
-    },
-    {
-      country: 'Europe',
-      year: '1999',
-      value: 729,
-    },
-    {
-      country: 'Europe',
-      year: '2050',
-      value: 628,
-    },
+    { type: '第一季度', money: 120 },
+    { type: '第二季度', money: 900 },
+    { type: '第三季度', money: 200 },
+    { type: '第四季度', money: 300 },
   ];
-
-  const barPlot = new PercentageStackBar(document.getElementById('plot3'), {
+  const waterfallPlot = new Waterfall(document.getElementById('plot3'), {
     title: {
-      visible: true,
-      text: '百分比堆叠条形图',
+      visible: false,
+      text: '2019年统计',
     },
+    forceFit: true,
     data,
-    theme: 'dark',
-    xField: 'value',
-    yField: 'year',
-    stackField: 'country',
+    padding: 'auto',
+    data,
+    xField: 'type',
+    yField: 'money',
+    meta: {
+      type: {
+        alias: '类别',
+      },
+      money: {
+        alias: '金额',
+      },
+    },
   });
 
-  barPlot.render();
+  waterfallPlot.render();
 }
 
 function plot4() {
-  axios.get('https:/g2plot.antv.vision/zh/examples/data/fireworks-sales.json')
-    .then((res) => {
-      const step = new StepLine(document.getElementById('plot4'), {
-        title: {
-          visible: true,
-          text: '单阶梯折线的基础用法',
-        },
-        description: {
-          visible: true,
-          text: '最基础简单的阶梯图使用方式，显示一个指标的趋势和变化',
-        },
-        forceFit: true,
-        data: res.data,
-        theme: 'dark',
-        padding: 'auto',
-        xField: 'Date',
-        yField: 'scales',
-        xAxis: {
-          type: 'dateTime',
-          tickCount: 5,
-        },
-      });
-
-      step.render();
+  const data = [
+    {
+      type: '第1季度',
+      value: 10,
+    },
+    {
+      type: '第2季度',
+      value: 20,
+    },
+    {
+      type: '第3季度',
+      value: 40,
+    },
+    {
+      type: '第4季度',
+      value: 30,
     }
-    )
-    .catch((data) => {
+  ];
 
-    });
+  const piePlot = new Pie(document.getElementById('plot4'), {
+    forceFit: true,
+    title: {
+      visible: false,
+      text: '2019年统计',
+    },
+    description: {
+      visible: true,
+      // text:
+      //   '当把饼图label的类型设置为spider时，标签分为两组，在图表两侧拉线对齐显示。一般来说，蜘蛛布局的label更不容易相互遮挡。',
+
+    },
+    radius: 0.8,
+    data,
+    angleField: 'value',
+    colorField: 'type',
+    label: {
+      visible: true,
+      type: 'spider',
+    },
+  });
+
+  piePlot.render();
 }
 
 
@@ -252,7 +167,7 @@ class Home extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ "paddingBottom": "200px" }}>
         <div className={`${styles.item} pullLeft`}>
           <div id="plot1"></div>
         </div>
