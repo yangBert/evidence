@@ -4,53 +4,11 @@ import { connect } from 'react-redux';
 import * as creators from '../store/creators';
 import styles from '../css/add.module.css';
 import spinningAction from 'pages/common/layer/spinning';
-import sm3 from 'sm3';
+//import sm3 from 'sm3';
 //import tools from 'static/js/tools';
 import CryptoJS from 'crypto-js';
 const { TextArea } = Input;
 const { Option } = Select;
-function Utf8ArrayToStr(array) {
-  var out, i, len, c;
-  var char2, char3;
-
-  out = "";
-  len = array.length;
-  i = 0;
-  while (i < len) {
-    c = array[i++];
-    switch (c >> 4) {
-      case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-        // 0xxxxxxx
-        out += String.fromCharCode(c);
-        break;
-      case 12: case 13:
-        // 110x xxxx   10xx xxxx
-        char2 = array[i++];
-        out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
-        break;
-      case 14:
-        // 1110 xxxx  10xx xxxx  10xx xxxx
-        char2 = array[i++];
-        char3 = array[i++];
-        out += String.fromCharCode(((c & 0x0F) << 12) |
-          ((char2 & 0x3F) << 6) |
-          ((char3 & 0x3F) << 0));
-        break;
-    }
-  }
-
-  return out;
-}
-
-function buf2hex(buffer) { // buffer is an ArrayBuffer
-  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
-}
-
-// 左补0到指定长度
-function leftPad(str, totalLength) {
-  const len = str.length;
-  return Array(totalLength > len ? ((totalLength - len) + 1) : 0).join(0) + str;
-}
 var hashFile = null
 class Add extends Component {
 

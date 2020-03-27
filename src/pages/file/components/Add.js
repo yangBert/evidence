@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spin, Button, Card, Form } from 'antd';
+import { Spin, Button, Card } from 'antd';
 import { connect } from 'react-redux';
 import * as creators from '../store/creators';
 import styles from '../css/add.module.css';

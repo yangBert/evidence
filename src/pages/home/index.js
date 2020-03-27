@@ -94,7 +94,6 @@ function plot3() {
     forceFit: true,
     data,
     padding: 'auto',
-    data,
     xField: 'type',
     yField: 'money',
     meta: {
