@@ -11,6 +11,13 @@ const initListAction = (list, pagination) => ({
   pagination
 })
 
+const initList2Action = (list2, pagination2) => ({
+  type: types.QUERY_LIST2,
+  list2,
+  pagination2
+})
+
+
 const setNameAction = name => ({
   type: types.SET_NAME,
   name
@@ -71,6 +78,39 @@ const saveAction = req => {
   }
 }
 
+const certSaveAction = req => {
+  return dispatch => {
+    dispatch(spinningAction(true))
+    const url = requestURL.evidenceAddUserCert
+    console.log("req", req.data)
+    request.formData(url, req.data, res => {
+      dispatch(spinningAction(false))
+      if (res.data) {
+        const { code, msg } = res.data
+        if (code === 0) {
+          Modal.success({
+            title: '系统提示',
+            content: msg,
+            okText: '确认',
+            onOk: () => {
+              req.props.history.goBack()
+            }
+          });
+        } else {
+          Modal.error({
+            title: '系统提示',
+            content: msg,
+            okText: '确认',
+            onOk: () => { }
+          });
+        }
+      } else {
+        req.props.history.push("/")
+      }
+    }, true)
+  }
+}
+
 //查询
 const queryListAction = req => {
   return dispatch => {
@@ -102,6 +142,35 @@ const queryListAction = req => {
   }
 }
 
+const queryList2Action = req => {
+  return dispatch => {
+    dispatch(spinningAction(true))
+    const reqData = req.data
+    request.json(requestURL.evidenceGetCertList, req.data, res => {
+      dispatch(spinningAction(false))
+      if (res.data) {
+        const { code, data, count, msg } = res.data
+        if (code === 0) {
+          const action = initList2Action(data, createPagination({
+            totalSize: count,
+            pageSize: reqData.pageSize,
+            pageNo: reqData.pageNo,
+          }))
+          dispatch(action)
+        } else {
+          Modal.error({
+            title: '系统提示',
+            content: msg,
+            okText: '确认',
+            onOk: () => { }
+          });
+        }
+      } else {
+        req.props.history.push("/")
+      }
+    }, true)
+  }
+}
 //查询携带参数
 const createChangeParamsAction = params => ({
   type: types.CHANGE_SEARCH_PARAMS,
@@ -110,10 +179,11 @@ const createChangeParamsAction = params => ({
 
 export {
   queryListAction,
+  queryList2Action,
   saveAction,
+  certSaveAction,
   onChangeSaveLoadingAction,
   createChangeParamsAction,
-
   setNameAction,
   setTypeAction,
   setPasswordAction,

@@ -99,6 +99,18 @@ class SideMenuUI extends React.Component {
               <span>文件管理</span>
             </Link>
           </Menu.Item>
+          <Menu.Item key="5">
+            <Link to="/pdf/sig">
+              <Icon type="file-pdf" />
+              <span>PDF签章</span>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="6">
+            <Link to="/pdf/ver">
+              <Icon type="file-pdf" />
+              <span>PDF验签</span>
+            </Link>
+          </Menu.Item>
         </Menu>
       </div>
     );

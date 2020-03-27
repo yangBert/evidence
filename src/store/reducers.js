@@ -5,6 +5,7 @@ import appReducer from 'pages/app/store/reducer';
 import evidenceReducer from 'pages/evidence/store/reducer';
 import userReducer from 'pages/user/store/reducer';
 import fileReducer from 'pages/file/store/reducer';
+import pdfReducer from 'pages/pdf/store/reducer';
 
 export default {
   login: loginReducer,
@@ -14,4 +15,5 @@ export default {
   evidence: evidenceReducer,
   user: userReducer,
   file: fileReducer,
+  pdf: pdfReducer,
 };

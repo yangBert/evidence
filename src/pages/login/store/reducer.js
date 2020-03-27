@@ -2,7 +2,8 @@ import * as types from './actionTypes'
 const defaultState = {
   loginLoading: false,
   loginName: "",
-  password: ""
+  password: "",
+  ukeyLoading: false
 };
 
 export default (state = defaultState, action) => {
@@ -16,6 +17,9 @@ export default (state = defaultState, action) => {
       break;
     case types.CHANGE_PASSWORD:
       newState.password = action.password
+      break;
+    case types.CHANGE_UKEY_LOADING:
+      newState.ukeyLoading = action.ukeyLoading
       break;
     default:
       break;

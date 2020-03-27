@@ -55,13 +55,13 @@ function jsonArr(requestURL, requestData, callback) {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
-      'AuthToken': $$.token.get()
+      'E-token': $$.token.get()
     },
     data: requestData,
   }
   const AuthToken = $$.token.get()
   if (AuthToken) {
-    config.headers.AuthToken = AuthToken
+    config.headers["E-token"] = AuthToken
   }
   axios(config).then(res => {
     if (res.data && !res.data.success && res.data.errCode === '400') {
@@ -83,7 +83,7 @@ function formData(requestURL, requestData, callback) {
     data: requestData,
     headers: {
       'Content-Type': 'multipart/form-data',
-      'AuthToken': $$.token.get()
+      'E-token': $$.token.get()
     },
     // transformRequest: [function (data) {
     //   return qs.stringify(data);

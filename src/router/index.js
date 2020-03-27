@@ -11,6 +11,8 @@ const UserAdd = lazy(() => import('pages/user/components/Add'));
 const FileList = lazy(() => import('pages/file'));
 const FileAdd = lazy(() => import('pages/file/components/Add'));
 const FileDetail = lazy(() => import('pages/file/components/Detail'));
+const PdfSig = lazy(() => import('pages/pdf/components/Sig'));
+const PdfVer = lazy(() => import('pages/pdf/components/Ver'));
 
 const routes = [
   {
@@ -60,6 +62,14 @@ const routes = [
   {
     path: "/file/detail",
     component: FileDetail
+  },
+  {
+    path: "/pdf/sig",
+    component: PdfSig
+  },
+  {
+    path: "/pdf/ver",
+    component: PdfVer
   },
 
 ];

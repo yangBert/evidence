@@ -7,22 +7,34 @@
   margin-left: -300px;
   text-align:center;
   background-color:#eee;
-  padding:30px 0 50px 0;
+  padding:0 0 50px 0;
 }
 
 .logo {
-  width: 40px;
+  width: 36px;
   position:relative;
   z-index: 100;
 }
 
 .title{
-  font-size: 22px;
+  font-size: 18px;
   display:inline;
   position:relative;
-  bottom: -11px;
+  bottom: -7px;
   margin-left: 20px;
-  color:#222;
+  color:#fff;
+}
+
+.header{
+  border-bottom:2px solid rgb(19, 123, 226);
+  padding: 10px 0;
+  margin-bottom:10px;
+  background:rgb(48, 141, 246);
+}
+
+.TabPane{
+  font-size:26px;
+  float:left;
 }
 
 .submit {
@@ -41,8 +53,7 @@
 }
 
 .formBlock{
-  width:422px;
-  margin:0 auto;
+  width:424px;
   margin-top: 30px;
   position:relative;
   right:-10px;
@@ -104,7 +115,7 @@
   bottom:0;
   width:100%;
   padding: 10px 0;
-  background-color: rgba(177, 191, 214, 0.3);
+  /* background-color: rgba(177, 191, 214, 0.3); */
   color:rgb(154, 199, 219);
   font-size:14px;
 }
@@ -113,6 +124,16 @@
   width: 18px;
   position:relative;
   top:-2px;
+}
+
+.keyContainer{
+  text-align:left;
+  font-size:15px;
+  margin-top:10px;
+}
+
+.keyContainer p {
+  padding-left: 10px;
 }
 
 @keyframes imgTop

@@ -59,6 +59,8 @@
   margin-left:16px;
 }
 
-.tabpane{
-  padding: 30px 0;
+.must{
+  color:red;
+  font-size:16px;
+  font-weight:bold;
 }

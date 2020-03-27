@@ -3,7 +3,9 @@ import spinningTypes from 'pages/common/layer/spinning/spinningTypes';
 
 const defaultState = {
   list: [],
+  list2: [],
   pagination: {},
+  pagination2: {},
   spinning: false,
   saveLoading: false,
   params: {},
@@ -22,6 +24,10 @@ export default (state = defaultState, action) => {
     case types.QUERY_LIST:
       newState.list = action.list
       newState.pagination = action.pagination
+      break;
+    case types.QUERY_LIST2:
+      newState.list2 = action.list2
+      newState.pagination2 = action.pagination2
       break;
     case types.CHANGE_SEARCH_PARAMS:
       newState.params = action.params
