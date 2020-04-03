@@ -16,7 +16,6 @@ const saveAction = req => {
     dispatch(spinningAction(true))
     const url = requestURL.evidenceSaveFile
     request.json(url, req.data, res => {
-      console.log("res===", res)
       dispatch(spinningAction(false))
       if (res.data) {
         const { code, msg } = res.data
@@ -51,7 +50,6 @@ const queryListAction = req => {
     const reqData = req.data
     request.json(requestURL.evidenceQueryFile, req.data, res => {
       dispatch(spinningAction(false))
-      console.log("res", res)
       if (res.data) {
         const { code, data, count, msg } = res.data && res.data
         if (code === 0) {

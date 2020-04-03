@@ -114,6 +114,7 @@ const queryListAction = req => {
       reqData.startTime = "2000-02-19";
       reqData.endTime = "2220-10-19";
     }
+    console.log("reqData", reqData)
     request.json(requestURL.evidenceQueryByTime, reqData, res => {
       dispatch(spinningAction(false))
       console.log("res", res)

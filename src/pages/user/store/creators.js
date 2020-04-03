@@ -50,6 +50,7 @@ const saveAction = req => {
   return dispatch => {
     dispatch(spinningAction(true))
     const url = requestURL.evidenceAddUser
+    console.log("req", req.data)
     request.json(url, req.data, res => {
       dispatch(spinningAction(false))
       if (res.data) {

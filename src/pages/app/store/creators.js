@@ -63,6 +63,7 @@ const queryListAction = req => {
   return dispatch => {
     dispatch(spinningAction(true))
     const reqData = req.data
+    console.log("req", req.data)
     request.json(requestURL.evidenceQueryApp, reqData, res => {
       dispatch(spinningAction(false))
       if (res.data) {

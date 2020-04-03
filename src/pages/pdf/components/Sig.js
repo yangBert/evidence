@@ -63,6 +63,7 @@ function Sig(props) {
     tag = JSON.stringify(tag);
     data.append("pdf", pdf);
     data.append("tag", tag);
+    console.log("tag", tag)
     props.sigSave({
       props,
       data
